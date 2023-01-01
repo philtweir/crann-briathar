@@ -10,7 +10,7 @@ import { ANIMATION_DURATION, DEFAULT_HEIGHT_DECREMENT, DEFAULT_LEVEL_HEIGHT, DEF
 <template>
   <div class="container">
     <vue-tree
-      style="width: 800px; height: 600px"
+      style="width: 100vw; height: 100vh"
       :dataset="richMediaData"
       :config="treeConfig"
       ref="tree"
@@ -38,7 +38,8 @@ const richMediaData = computed(() => ({
 function recenterOn (node, root) {
   const _this = this;
   const transform = _this.svgElement.style.transform;
-  const startX = (root ? root.x : 0) + 400;
+  const elWidthMid = _this.svgElement.getBoundingClientRect().width / 2;
+  const startX = (root ? root.x : 0) + elWidthMid;
   const startY = (root ? root.y : 0) - 20;
   var originTransform = transform.replace("translate(0px)", "translate(0px, 0px)");
   var originOffsetX = 0;
