@@ -11,7 +11,7 @@
           mdi-home
       </v-icon>
     </v-btn>
-    <v-btn value="define" @click="goDefine">
+    <v-btn value="define" @click="goDefine" :variant="selectedNode && selectedNode.meanings ? 'tonal' : 'elevated'">
       <v-icon aria-label="Define" :color="selectedNode && selectedNode.meanings ? 'green-darken-2': null">
           mdi-help
       </v-icon>

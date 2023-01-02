@@ -1,7 +1,8 @@
 <template>
   <div>
     <v-navigation-drawer location="bottom" temporary v-model="drawer">
-        <p v-if="selectedNode">{{ selectedNode.value }}</p>
+        <p v-if="selectedNode && selectedNode.meanings">[ {{ selectedNode.value }} ]</p>
+        <p v-else-if="selectedNode">{{ selectedNode.value }}</p>
         <v-list density="compact" nav v-if="(selectedNode && selectedNode.meanings) && !showVerblist">
           <v-list-item v-for="(meaning, ix) in selectedNode.meanings" prepend-icon="mdi-view-dashboard" :title="meaning.value" :value="meaning.value"></v-list-item>
         </v-list>
@@ -11,6 +12,7 @@
     </v-navigation-drawer>
     <v-snackbar
         v-model="snackbar"
+        height="200px"
         :timeout="timeout"
         v-if="selectedNode && selectedNode.meanings"
       >

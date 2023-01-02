@@ -2,6 +2,7 @@
 import HelloWorld from "./components/HelloWorld.vue";
 import Nav from "./components/Nav.vue";
 import Definition from "./components/Definition.vue";
+import { store } from "./store.js"
 </script>
 
 <template>
@@ -15,6 +16,11 @@ import Definition from "./components/Definition.vue";
 <script>
 export default {
   name: 'app',
+  mounted () {
+    fetch("verb-tree.json").then(res => res.json()).then(verbTree => {
+       store.verbTree = verbTree
+    })
+  },
   methods: {
   }
 }
