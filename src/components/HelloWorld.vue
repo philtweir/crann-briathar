@@ -11,6 +11,8 @@ import { ANIMATION_DURATION, DEFAULT_HEIGHT_DECREMENT, DEFAULT_LEVEL_HEIGHT, DEF
   <div class="container">
     <div class="infotext">
       <p>Tap a word to show follow-on words. Tap it again to move up a level.</p>
+      <p class="note">github.com/philtweir/crann-briathar</p>
+      <p class="note">This is a hobbyist experiment - don't trust it.</p>
     </div>
     <vue-tree
       style="width: 100vw; height: 100vh"
@@ -216,5 +218,9 @@ export default {
   word-wrap: wrap;
   font-size: 150%;
   color: rgba(50, 50, 50, 0.5);
+}
+
+.note {
+  font-size: 50%;
 }
 </style>

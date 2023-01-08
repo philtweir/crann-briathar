@@ -5,6 +5,7 @@
         <p v-else-if="selectedNode">{{ selectedNode.value }}</p>
         <v-list density="compact" nav v-if="(selectedNode && selectedNode.meanings) && !showVerblist">
           <v-list-item v-for="(meaning, ix) in selectedNode.meanings" prepend-icon="mdi-view-dashboard" :title="meaning.value" :value="meaning.value"></v-list-item>
+          <v-list-item prepend-icon="mdi-help" @click="goTeanglann(selectedNode.value)" title="Open in Teanglann"></v-list-item>
         </v-list>
         <v-list v-else density="compact" nav>
           <v-list-item v-for="(verb, ix) in verbs" prepend-icon="mdi-view-dashboard" @click="goVerb(verb.value)" :title="verb.text" :value="verb.value"></v-list-item>
@@ -81,6 +82,9 @@ export default {
     goVerb (value) {
       this.drawer = false
       store.selectedNode = {"value": value}
+    },
+    goTeanglann (word) {
+      window.open("https://www.teanglann.ie/en/fgb/" + word.replace("-", "_"), "teanglann")
     }
   }
 }
