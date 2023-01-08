@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 public/verb-tree.json
+public/verb-tree-short.json

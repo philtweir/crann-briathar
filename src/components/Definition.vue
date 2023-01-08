@@ -14,7 +14,7 @@
         v-model="snackbar"
         height="200px"
         :timeout="timeout"
-        v-if="selectedNode && selectedNode.meanings"
+        v-if="selectedNode && selectedNode.meanings && selectedNode.children"
       >
       {{ selectedNode.meanings.map(meaning => meaning.value).join(", ") }}
 
@@ -68,10 +68,12 @@ export default {
       }
     },
     selectedNode (node) {
-      if (!node.children || node.children.length == 0) {
-        store.define = true
-      } else {
-        this.snackbar = true
+      if (node && node.meanings) {
+        if (!node.children || node.children.length == 0) {
+          store.define = true
+        } else {
+          this.snackbar = true
+        }
       }
     }
   },

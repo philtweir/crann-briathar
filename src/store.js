@@ -4,7 +4,10 @@ export const store = reactive({
   selectedNode: null,
   define: false,
   showVerblist: false,
-  verbTree: []
+  useShort: true,
+  showHelp: false,
+  verbTree: [],
+  verbTreeShort: []
   /*
     verbTree: [
         {

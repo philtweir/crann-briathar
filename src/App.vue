@@ -1,5 +1,6 @@
 <script setup>
 import HelloWorld from "./components/HelloWorld.vue";
+import Help from "./components/Help.vue";
 import Nav from "./components/Nav.vue";
 import Definition from "./components/Definition.vue";
 import { store } from "./store.js"
@@ -8,18 +9,39 @@ import { store } from "./store.js"
 <template>
   <v-app>
     <Nav />
-    <HelloWorld />
+    <HelloWorld :dataset="richMediaData" />
     <Definition />
+    <v-dialog v-model="help" fullscreen hide-overlay transition="dialog-bottom-transition">
+      <Help/>
+    </v-dialog>
   </v-app>
 </template>
 
 <script>
+import { store } from "./store.js"
+
 export default {
   name: 'app',
   mounted () {
     fetch("verb-tree.json").then(res => res.json()).then(verbTree => {
        store.verbTree = verbTree
     })
+    fetch("verb-tree-short.json").then(res => res.json()).then(verbTreeShort => {
+       store.verbTreeShort = verbTreeShort
+    })
+  },
+  computed: {
+    help() {
+      return store.showHelp
+    },
+    richMediaData() {
+      return {
+        value: 'Briathra',
+        text: 'Briathra',
+        _collapsed: true,
+        children: store.useShort ? store.verbTreeShort : store.verbTree
+      }
+    },
   },
   methods: {
   }

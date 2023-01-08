@@ -9,9 +9,12 @@ import { ANIMATION_DURATION, DEFAULT_HEIGHT_DECREMENT, DEFAULT_LEVEL_HEIGHT, DEF
 
 <template>
   <div class="container">
+    <div class="infotext">
+      <p>Tap a word to show follow-on words. Tap it again to move up a level.</p>
+    </div>
     <vue-tree
       style="width: 100vw; height: 100vh"
-      :dataset="richMediaData"
+      :dataset="dataset"
       :config="treeConfig"
       ref="tree"
     >
@@ -62,6 +65,12 @@ function recenterOn (node, root) {
 }
 export default {
   name: 'treemap',
+  props: {
+    dataset: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       previousSelectedNode: null,
@@ -69,91 +78,93 @@ export default {
     }
   },
   mounted() {
-    const tree = this.$refs.tree
-    tree.treeChartCore.recenterOn = recenterOn
-    tree.treeChartCore.treeContainer.ontouchstart = (ev) => {
-      ev.clientX = ev.changedTouches[0].clientX
-      ev.clientY = ev.changedTouches[0].clientY
-      return tree.treeChartCore.treeContainer.onmousedown(ev)
-    }
-    tree.treeChartCore.treeContainer.ontouchmove = (ev) => {
-      ev.clientX = ev.changedTouches[0].clientX
-      ev.clientY = ev.changedTouches[0].clientY
-      return tree.treeChartCore.treeContainer.onmousemove(ev)
-    }
-    tree.treeChartCore.treeContainer.ontouchend = (ev) => {
-      ev.clientX = ev.changedTouches[0].clientX
-      ev.clientY = ev.changedTouches[0].clientY
-      return tree.treeChartCore.treeContainer.onmouseup(ev)
-    }
-    tree.treeChartCore.buildTree = function () {
-        var treeBuilder = d3
-            .tree()
-            .nodeSize([this.treeConfig.nodeWidth, this.treeConfig.levelHeight])
-        var tree = treeBuilder(d3.hierarchy(this.dataset, (data) => (data._collapsed ? null : data.children)))
-        return [tree.descendants(), tree.links()];
-    }
-    tree.setNodeCollapsed = function (data, on) {
-      var tree = d3.hierarchy(this.dataset).descendants();
-      const node = tree.find(function (d) {
-          return d.data.value == data.value;
-      });
-      if (on) {
-        node.ancestors().forEach((ancestor) => (ancestor.data._collapsed = false))
-        node.data._collapsed = true
-      } else {
-        node.ancestors().forEach((ancestor) => (ancestor.data._collapsed = false))
-        node.data._collapsed = false
-        if (node.data.children) {
-          node.data.children.forEach((child) => (child._collapsed = true))
-        }
-      }
-      this.treeChartCore.draw()
-      this.nodeDataList = this.treeChartCore.getNodeDataList();
-    }
-    tree.onClickNode = (index) => {
-      const target = tree.treeChartCore.nodeDataList[index].data
-      if (this.selectedNode && target.value == this.selectedNode.value) {
-        var node = tree.treeChartCore.nodeDataList[index].find((node) => (node.data.value == target.value))
-        if (node.parent && node.parent.data.name !== "__invisible_root") {
-          this.selectNode(node.parent.data)
-        }
-      } else {
-        this.selectNode(target)
-      }
-    }
+    this.init()
   },
   computed: {
-    richMediaData() {
-      return {
-        value: 'Briathra',
-        text: 'Briathra',
-        _collapsed: true,
-        children: store.verbTree
-      }
-    },
     selectedNode() {
       return store.selectedNode
     }
   },
   watch: {
+    dataset() {
+      this.init()
+    },
     selectedNode(n) {
       const tree = this.$refs.tree
       const oldSelectedNode = this.previousSelectedNode
       if (oldSelectedNode) {
         tree.setNodeCollapsed(oldSelectedNode, true)
       }
-      tree.setNodeCollapsed(n, false)
-      setTimeout(() => {
-        const node = this.$refs.tree.treeChartCore.nodeDataList.find((node) => (node.data.value == n.value))
-        const root = this.$refs.tree.treeChartCore.nodeDataList[0]
-        this.$refs.tree.treeChartCore.recenterOn(node, root)
-      }, 500)
+      if (n) {
+        tree.setNodeCollapsed(n, false)
+        setTimeout(() => {
+          const node = this.$refs.tree.treeChartCore.nodeDataList.find((node) => (node.data.value == n.value))
+          const root = this.$refs.tree.treeChartCore.nodeDataList[0]
+          this.$refs.tree.treeChartCore.recenterOn(node, root)
+        }, 500)
 
-      this.previousSelectedNode = n.data
+        this.previousSelectedNode = n.data
+      } else {
+        this.previousSelectedNode = null
+      }
     }
   },
   methods: {
+    init() {
+      const tree = this.$refs.tree
+      tree.treeChartCore.recenterOn = recenterOn
+      tree.treeChartCore.treeContainer.ontouchstart = (ev) => {
+        ev.clientX = ev.changedTouches[0].clientX
+        ev.clientY = ev.changedTouches[0].clientY
+        return tree.treeChartCore.treeContainer.onmousedown(ev)
+      }
+      tree.treeChartCore.treeContainer.ontouchmove = (ev) => {
+        ev.clientX = ev.changedTouches[0].clientX
+        ev.clientY = ev.changedTouches[0].clientY
+        return tree.treeChartCore.treeContainer.onmousemove(ev)
+      }
+      tree.treeChartCore.treeContainer.ontouchend = (ev) => {
+        ev.clientX = ev.changedTouches[0].clientX
+        ev.clientY = ev.changedTouches[0].clientY
+        return tree.treeChartCore.treeContainer.onmouseup(ev)
+      }
+      tree.treeChartCore.buildTree = function () {
+          var treeBuilder = d3
+              .tree()
+              .nodeSize([this.treeConfig.nodeWidth, this.treeConfig.levelHeight])
+          var tree = treeBuilder(d3.hierarchy(this.dataset, (data) => (data._collapsed ? null : data.children)))
+          return [tree.descendants(), tree.links()];
+      }
+      tree.setNodeCollapsed = function (data, on) {
+        var tree = d3.hierarchy(this.treeChartCore.dataset).descendants();
+        const node = tree.find(function (d) {
+            return d.data.value == data.value;
+        });
+        if (on) {
+          node.ancestors().forEach((ancestor) => (ancestor.data._collapsed = false))
+          node.data._collapsed = true
+        } else {
+          node.ancestors().forEach((ancestor) => (ancestor.data._collapsed = false))
+          node.data._collapsed = false
+          if (node.data.children) {
+            node.data.children.forEach((child) => (child._collapsed = true))
+          }
+        }
+        this.treeChartCore.draw()
+        this.nodeDataList = this.treeChartCore.getNodeDataList();
+      }
+      tree.onClickNode = (index) => {
+        const target = tree.treeChartCore.nodeDataList[index].data
+        if (this.selectedNode && target.value == this.selectedNode.value) {
+          var node = tree.treeChartCore.nodeDataList[index].find((node) => (node.data.value == target.value))
+          if (node.parent && node.parent.data.name !== "__invisible_root") {
+            this.selectNode(node.parent.data)
+          }
+        } else {
+          this.selectNode(target)
+        }
+      }
+    },
     selectNode(node) {
       store.selectedNode = node
     },
@@ -196,5 +207,14 @@ export default {
 
 .rich-media-node.selected-node {
   background-color: red
+}
+
+.infotext {
+  position: absolute;
+  top: 50vh;
+  width: 100vw;
+  word-wrap: wrap;
+  font-size: 150%;
+  color: rgba(50, 50, 50, 0.5);
 }
 </style>
