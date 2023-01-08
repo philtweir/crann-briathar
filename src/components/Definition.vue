@@ -67,8 +67,12 @@ export default {
         store.showVerblist = false
       }
     },
-    selectedNode () {
-      this.snackbar = true
+    selectedNode (node) {
+      if (!node.children || node.children.length == 0) {
+        store.define = true
+      } else {
+        this.snackbar = true
+      }
     }
   },
   methods: {

@@ -30,11 +30,6 @@ import { ANIMATION_DURATION, DEFAULT_HEIGHT_DECREMENT, DEFAULT_LEVEL_HEIGHT, DEF
 </template>
 
 <script>
-const richMediaData = computed(() => ({
-  value: 'Briathra',
-  text: 'Briathra',
-  children: store.verbTree
-}))
 function recenterOn (node, root) {
   const _this = this;
   const transform = _this.svgElement.style.transform;
@@ -70,7 +65,7 @@ export default {
   data() {
     return {
       previousSelectedNode: null,
-      treeConfig: { nodeWidth: 120, nodeHeight: 80, levelHeight: 200 }
+      treeConfig: { nodeWidth: 120, nodeHeight: 80, levelHeight: 200 },
     }
   },
   mounted() {
@@ -129,6 +124,14 @@ export default {
     }
   },
   computed: {
+    richMediaData() {
+      return {
+        value: 'Briathra',
+        text: 'Briathra',
+        _collapsed: true,
+        children: store.verbTree
+      }
+    },
     selectedNode() {
       return store.selectedNode
     }
