@@ -76,6 +76,21 @@ export default {
   mounted() {
     const tree = this.$refs.tree
     tree.treeChartCore.recenterOn = recenterOn
+    tree.treeChartCore.treeContainer.ontouchstart = (ev) => {
+      ev.clientX = ev.changedTouches[0].clientX
+      ev.clientY = ev.changedTouches[0].clientY
+      return tree.treeChartCore.treeContainer.onmousedown(ev)
+    }
+    tree.treeChartCore.treeContainer.ontouchmove = (ev) => {
+      ev.clientX = ev.changedTouches[0].clientX
+      ev.clientY = ev.changedTouches[0].clientY
+      return tree.treeChartCore.treeContainer.onmousemove(ev)
+    }
+    tree.treeChartCore.treeContainer.ontouchend = (ev) => {
+      ev.clientX = ev.changedTouches[0].clientX
+      ev.clientY = ev.changedTouches[0].clientY
+      return tree.treeChartCore.treeContainer.onmouseup(ev)
+    }
     tree.treeChartCore.buildTree = function () {
         var treeBuilder = d3
             .tree()
